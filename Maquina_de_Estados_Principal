@@ -1,0 +1,193 @@
+`timescale 1ns / 1ps
+//////////////////////////////////////////////////////////////////////////////////
+// Universidad: I.T.C.R
+// Estudiantes: Julio Aguilar Gutiérrez
+//              Daniel Víquez Gómez
+// Create Date:    15:24:23 08/03/2015 
+// Design Name:    Proyecto 1
+// Module Name:    Maquina_de_Estados 
+// Project Name:   
+// Target Devices: 
+// Tool versions: 
+// Description: 
+//
+// Dependencies: 
+//
+// Revision: 
+// Revision 0.01 - File Created
+// Additional Comments: 
+//
+//////////////////////////////////////////////////////////////////////////////////
+module Maquina_de_Estados
+    (
+	 input wire clk,reset,
+    input Humo,
+    input Sobrecarga_electrica,
+    input Temperatura,
+    output reg Alarma_Hum ,
+    output reg Alarma_Sobrecarga,
+    output reg Alarma_Tem
+    );
+ 
+ 
+																									//Declaracion de estado
+    localparam  [2:0]      e0=3'b000, 
+								   e1=3'b001,
+						         e2=3'b010,
+									e3=3'b011,
+									e4=3'b100,
+									e5=3'b101,
+									e6=3'b110,
+									e7=3'b111;
+
+																								   
+																									//Declaración de señal
+   reg [2:0] estado_siguiente,estado_actual;
+	reg Alarma_Hum_siguiente, Alarma_Sobrecarga_siguiente,  Alarma_Tem_siguiente;
+	
+																									
+																									//Declaración de estados
+																									
+																									
+always @ (posedge clk , posedge reset )
+    if  (reset) begin
+	      estado_actual <= e0 ;
+			Alarma_Hum <= 1'b0 ;
+         Alarma_Sobrecarga  <= 1'b0 ;
+         Alarma_Tem  <= 1'b0;
+	 end
+    else begin
+	      estado_actual <= estado_siguiente;
+			Alarma_Hum <= Alarma_Hum_siguiente;
+         Alarma_Sobrecarga  <=  Alarma_Sobrecarga_siguiente;
+         Alarma_Tem  <=Alarma_Tem_siguiente;
+	 end
+			
+																					 			  // Siguiente estado
+																								
+always @*
+begin
+Alarma_Hum_siguiente=Alarma_Hum;
+Alarma_Tem_siguiente=Alarma_Tem;
+Alarma_Sobrecarga_siguiente =Alarma_Sobrecarga;
+     
+     case (estado_actual)
+			
+			e0:
+				estado_siguiente=e1;
+					
+			e1:   if (Humo)
+		      	begin
+			      estado_siguiente=e2;
+					Alarma_Hum_siguiente=1;
+					end
+					else 
+					begin
+					estado_siguiente=e3;
+					Alarma_Hum_siguiente=0;
+					end
+		
+        e2:    if (Temperatura)
+               begin
+				   estado_siguiente= e4;
+					Alarma_Tem_siguiente=1;
+				   Alarma_Hum_siguiente=1;
+					end
+				   else
+				   begin
+					estado_siguiente=e5;
+		         Alarma_Hum_siguiente=1;
+					Alarma_Tem_siguiente=0 ;
+
+					end
+					
+		 e3:     if (Sobrecarga_electrica)
+               begin
+				   estado_siguiente=e6;
+               Alarma_Sobrecarga_siguiente=1;
+					Alarma_Hum_siguiente=0;
+               end
+				   else
+					begin
+               estado_siguiente=e7;
+					Alarma_Sobrecarga_siguiente=0;
+					Alarma_Hum_siguiente=0;
+					end
+          
+		 e4:    if (Sobrecarga_electrica)
+              begin
+				  estado_siguiente=e0;
+              Alarma_Hum_siguiente=1;
+				  Alarma_Tem_siguiente=1 ;
+				  Alarma_Sobrecarga_siguiente= 1;
+				  end
+				  else
+              begin
+				  estado_siguiente= e0;
+              Alarma_Hum_siguiente=1;
+              Alarma_Tem_siguiente=1;
+				  Alarma_Sobrecarga_siguiente=0;
+				  end
+			
+		 e5:    if(Sobrecarga_electrica)
+			     begin
+				  estado_siguiente=e0;
+              Alarma_Hum_siguiente=1;
+				  Alarma_Sobrecarga_siguiente= 1;
+				  Alarma_Tem_siguiente=0;
+				  end
+				  else
+              begin
+				  estado_siguiente= e0;
+              Alarma_Hum_siguiente=1;
+				  Alarma_Tem_siguiente=0;
+				  Alarma_Sobrecarga_siguiente= 0;
+              end
+				
+		 e6:    if (Temperatura) 
+              begin 
+              estado_siguiente=e0;
+				  Alarma_Tem_siguiente=1;
+				  Alarma_Sobrecarga_siguiente= 1;
+				  Alarma_Hum_siguiente=0;
+              end
+				  else
+				  begin
+				  estado_siguiente=e0;
+				  Alarma_Sobrecarga_siguiente= 1;
+				  Alarma_Tem_siguiente=0;
+				   Alarma_Hum_siguiente=0;				  
+              end
+				
+		 e7:     if (Temperatura)
+				   begin 
+               estado_siguiente=e0;
+				   Alarma_Tem_siguiente=1 ;	
+					Alarma_Hum_siguiente=0;	
+					Alarma_Sobrecarga_siguiente= 0;
+               end
+				   else
+				   begin
+				   estado_siguiente=e0;
+					Alarma_Tem_siguiente=0;
+					Alarma_Hum_siguiente=0;
+					Alarma_Sobrecarga_siguiente= 0;
+               end
+
+
+endcase 				  
+       				  
+				
+																						
+			end	
+			
+					 
+
+
+
+
+
+  
+
+
+endmodule
