@@ -1,0 +1,49 @@
+`timescale 1ns / 1ps
+//////////////////////////////////////////////////////////////////////////////////
+// Company: 
+// Engineer: 
+// 
+// Create Date:    12:02:44 08/10/2015 
+// Design Name: 
+// Module Name:    Div2Hz 
+// Project Name: 
+// Target Devices: 
+// Tool versions: 
+// Description: 
+//
+// Dependencies: 
+//
+// Revision: 
+// Revision 0.01 - File Created
+// Additional Comments: 
+//
+//////////////////////////////////////////////////////////////////////////////////
+module Div2Hz(
+ input clk,rst,
+	output reg clk_out
+    );
+
+	reg [24:0] counter;
+	
+	always @(posedge clk, posedge rst)
+	begin
+		if (rst)
+			begin
+				counter<=25'd0;
+				clk_out<= 1'b0;
+			end
+		else
+			if (counter==25'd24999999) //esto genera un clk de 2 Hz por la division que se realizo de los 100MHz que eran
+			begin
+				counter<=25'd0;
+				clk_out <= ~clk_out;
+			end
+	  else
+	   begin
+			counter <=counter+1'b1;
+		end
+	end
+
+
+
+endmodule
