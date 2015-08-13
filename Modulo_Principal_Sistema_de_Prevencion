@@ -1,0 +1,95 @@
+`timescale 1ns / 1ps
+//////////////////////////////////////////////////////////////////////////////////
+// Company: 
+// Engineer: 
+// 
+// Create Date:    09:59:40 08/08/2015 
+// Design Name: 
+// Module Name:    Sistema_de_Prevencion 
+// Project Name: 
+// Target Devices: 
+// Tool versions: 
+// Description: 
+//
+// Dependencies: 
+//
+// Revision: 
+// Revision 0.01 - File Created
+// Additional Comments: 
+//
+//////////////////////////////////////////////////////////////////////////////////
+module Sistema_de_Prevencion(
+    
+	 input reset,
+	 input clk,
+	 input [6:0] datos,
+    output Led_Tem,
+	 output Led_Sobrecarga,
+	 output Led_Humo,
+	 output [7:0] ac_salida,
+    output [3:0] ah_salida
+    
+    );
+
+                //Cables de conexión entre salida de eliminador de rebotes y entrada al registro
+wire humo;
+wire sobrecarga;
+wire sal_reset;
+
+					//Cables de conexión entre salida de registro de datos a entradas del deco de datos de temperatura
+
+  
+wire Alarmahumo;
+wire Alarmasobrecarga;
+
+               // Wire que corresponde a un bus de datos que facilita la instanciación en los modulos Eliminador_de_rebotes Eliminador_general ...
+ /*wire bus_temperatura [3:0];
+assign t0 = bus_temperatura [0];
+assign t1 = bus_temperatura [1];
+assign t2 = bus_temperatura [2];
+assign t3 = bus_temperatura [3];
+
+			    // Wire que corresponde a un bus de datos en la salida del registro de datos de temperatura y que se conecta como entrada al decodificador de temperatura.		
+				 
+wire bus_temperatura1 [3:0];
+assign t0 = bus_temperatura [0];
+assign t1 = bus_temperatura [1];
+assign t2 = bus_temperatura [2];
+assign t3 = bus_temperatura [3];		
+*/
+
+wire salida_clock_eliminador;
+wire [6:0] salida_datos_eliminador;
+wire [6:0] salida_datos_registro;
+wire salida_deco_tem;
+wire salida_clock2Hz;
+
+Reloj_Eliminador clock_eliminador (.rst(reset),.clk(clk),.clk_out(salida_clock_eliminador)); 
+
+Eliminador_de_rebotes Eliminador_general (.clr(reset),.inboton(datos),.cclk(salida_clock_eliminador),.outboton(salida_datos_eliminador));
+
+RegistrodatosEntrada Datos (.Datos_entrada(salida_datos_eliminador), .clk(salida_clock2Hz) , .Salida_datos(salida_datos_registro));
+
+Deco_Registros_Entrada Deco_datos_temperatura(.Alarma_Tem(salida_datos_registro[3:0]),.deco(salida_deco_tem));
+
+ 
+ wire  sal_Ahum;
+ wire sal_Atem;
+ wire sal_Asobre;
+ 
+Div2Hz Divisor2Hz (.rst(reset),	.clk(clk),.clk_out(salida_clock2Hz));
+
+Maquina_de_Estados FSM ( .clk(salida_clock2Hz), .reset(salida_datos_registro[6]), .Humo(salida_datos_registro[5]), .Sobrecarga_electrica(salida_datos_registro[4]) , .Temperatura(salida_deco_tem), .Alarma_Hum(sal_Ahum) , .Alarma_Sobrecarga(sal_Asobre), .Alarma_Tem(sal_Atem) );
+
+ wire salida_clock400Hz; // reloj 7 segmentos
+ 
+ DivisonReloj7S clock7S (.rst(reset),	.clk(clk),.clk_out(salida_clock400Hz));
+
+ MaqEstados_7S MaqEst7S( .clk(salida_clock400Hz), .reset(salida_datos_registro[6]), .Alarma_Hum(sal_Ahum), .Alarma_S(sal_Asobre), .Alarma_Tem(sal_Atem), .ac(ac_salida),.ah(ah_salida));
+
+
+    assign Led_Tem = sal_Atem;
+	 assign Led_Sobrecarga = sal_Asobre;
+	 assign Led_Humo = sal_Ahum;
+
+ endmodule
