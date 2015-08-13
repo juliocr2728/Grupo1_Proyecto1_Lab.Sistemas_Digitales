@@ -1,0 +1,36 @@
+`timescale 1ns / 1ps
+//////////////////////////////////////////////////////////////////////////////////
+// Company: 
+// Engineer: 
+// 
+// Create Date:    10:41:29 08/06/2015 
+// Design Name: 
+// Module Name:    RegistrodatosEntrada 
+// Project Name: 
+// Target Devices: 
+// Tool versions: 
+// Description: 
+//
+// Dependencies: 
+//
+// Revision: 
+// Revision 0.01 - File Created
+// Additional Comments: 
+//
+//////////////////////////////////////////////////////////////////////////////////
+module RegistrodatosEntrada(
+   
+	
+	input wire [6:0] Datos_entrada,
+	input wire clk,
+	output reg [6:0] Salida_datos
+	);
+	always @(posedge clk)
+	begin
+		 Salida_datos <= Datos_entrada; 
+		
+	end
+
+
+
+endmodule
