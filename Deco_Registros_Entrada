@@ -1,0 +1,45 @@
+`timescale 1ns / 1ps
+//////////////////////////////////////////////////////////////////////////////////
+// Company: 
+// Engineer: 
+// 
+// Create Date:    11:05:41 08/06/2015 
+// Design Name: 
+// Module Name:    Deco_Registros_Entrada 
+// Project Name: 
+// Target Devices: 
+// Tool versions: 
+// Description: 
+//
+// Dependencies: 
+//
+// Revision: 
+// Revision 0.01 - File Created
+// Additional Comments: 
+//
+//////////////////////////////////////////////////////////////////////////////////
+module Deco_Registros_Entrada(
+input  [3:0] Alarma_Tem,
+output reg deco
+    );
+
+
+
+always @*
+begin
+//Alarma_Tem=4'b0000;
+
+if(Alarma_Tem>4'b1100)
+
+/* Tomando 4 bits y utilizando sus poibles 16 representaciones ,
+además de existir la relación en que 1 bit equivale a 4 grados de temperatura se toma que el numero 12 binario equivale a 48 °C
+como referencia de limite de alta temperatura en el sistema , se definio 1100 como temperatura limite de energía, más alto a eso será alta temperatura
+*/
+deco=1;
+else
+deco=0;
+end
+
+
+
+endmodule
