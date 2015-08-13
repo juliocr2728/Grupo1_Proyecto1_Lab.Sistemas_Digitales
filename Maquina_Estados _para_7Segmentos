@@ -1,0 +1,116 @@
+`timescale 1ns / 1ps
+//////////////////////////////////////////////////////////////////////////////////
+// Company: 
+// Engineer: 
+// 
+// Create Date:    11:30:37 08/06/2015 
+// Design Name: 
+// Module Name:    MaqEstados_7S 
+// Project Name: 
+// Target Devices: 
+// Tool versions: 
+// Description: 
+//
+// Dependencies: 
+//
+// Revision: 
+// Revision 0.01 - File Created
+// Additional Comments: 
+//
+//////////////////////////////////////////////////////////////////////////////////
+module MaqEstados_7S(
+    input wire clk,reset,
+	 input wire Alarma_Hum,
+    input wire Alarma_S,
+    input wire Alarma_Tem,
+    output reg [7:0] ac,
+    
+    output reg [3:0] ah
+    
+    );
+
+																								//Declaracion de estado
+    localparam  [1:0]      e0=2'b00, 
+								   e1=2'b01,
+						         e2=2'b10;
+									
+
+																								   
+																									//Declaración de señal
+   reg [1:0] estado_siguiente,estado_actual;
+	
+																									
+																									//Declaración de estados
+																									
+always @ (posedge clk , posedge reset )
+    if  (reset)
+	      estado_actual <= e0 ;
+    else 
+	      estado_actual <= estado_siguiente;
+			
+																					 			  // Siguiente estado
+																								
+always @*
+begin
+																
+ac = 8'b11111111;
+ah =	4'b1111;      
+estado_siguiente=estado_actual;
+
+case (estado_actual)
+				
+e0:
+begin 
+estado_siguiente=e1;
+																								// Representar una A
+		
+		if (Alarma_Tem)
+begin
+			ac= 8'b00010001;
+		   ah =	4'b0111;
+end			
+		else
+
+begin
+		 ac=8'b11111101;
+       ah =	4'b0111;
+end     
+
+end
+			
+			e1: 
+begin 
+		estado_siguiente=e2;
+	if (Alarma_Hum)                                                    // Representar una H
+	begin
+	   ac =  8'b10010001;
+		ah =	4'b1011;
+	end
+   else	
+		begin
+		 ac=8'b11111101;
+       ah =	4'b1011;
+   end  
+end 	
+			
+				e2: 
+				
+begin
+				estado_siguiente=e0;   											//Representar una H
+			 if (Alarma_S)
+	   begin
+		ac =  8'b01001001;
+		ah =	4'b1101;
+	   end
+		
+		else 
+		
+		begin
+		 ac=8'b11111101;
+       ah =	4'b1101;
+      end  
+end 		
+			 endcase
+			 end
+			
+endmodule
