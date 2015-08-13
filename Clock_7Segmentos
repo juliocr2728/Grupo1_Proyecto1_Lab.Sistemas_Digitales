@@ -1,0 +1,46 @@
+`timescale 1ns / 1ps
+//////////////////////////////////////////////////////////////////////////////////
+// Company: 
+// Engineer: 
+// 
+// Create Date:    10:33:12 08/06/2015 
+// Design Name: 
+// Module Name:    DivisonReloj7S 
+// Project Name: 
+// Target Devices: 
+// Tool versions: 
+// Description: 
+//
+// Dependencies: 
+//
+// Revision: 
+// Revision 0.01 - File Created
+// Additional Comments: 
+//
+//////////////////////////////////////////////////////////////////////////////////
+module DivisonReloj7S(clk,rst,clk_out );
+input clk,rst;
+	output reg clk_out;
+	reg [16:0] counter;
+	
+	always @(posedge clk, posedge rst)
+	begin
+		if (rst)
+			begin
+				counter<=17'd0;
+				clk_out<= 1'b0;
+			end
+		else
+			if (counter==17'd124999) //esto genera un clk de 400Hz Hz por la division que se realizo de los 100MHz que eran
+			begin
+				counter<=17'd0;
+				clk_out <= ~clk_out;
+			end
+	  else
+	   begin
+			counter <=counter+1'b1;
+		end
+	end
+
+
+endmodule
