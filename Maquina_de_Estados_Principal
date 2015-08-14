@@ -157,6 +157,7 @@ Alarma_Sobrecarga_siguiente =Alarma_Sobrecarga;
 				  Alarma_Sobrecarga_siguiente= 1;
 				  Alarma_Tem_siguiente=0;
 				   Alarma_Hum_siguiente=0;				  
+              
               end
 				
 		 e7:     if (Temperatura)
