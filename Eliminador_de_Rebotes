@@ -35,7 +35,7 @@ reg [6:0] delay2;
 reg [6:0] delay3;       
 
 always @(posedge cclk, posedge clr) begin
-   if(clr) begin        //Si se activa clr
+   if(clr) begin        
       delay1<=0;        
       delay2<=0;        
       delay3<=0;        
