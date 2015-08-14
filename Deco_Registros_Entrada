@@ -24,7 +24,6 @@ output reg deco
     );
 
 
-
 always @*
 begin
 //Alarma_Tem=4'b0000;
